@@ -981,7 +981,8 @@
             "protocol": "openocd",
             "require_upload_port" : false,
             "use_1200bps_touch": false,
-            "wait_for_upload_port": false
+            "wait_for_upload_port": false,
+            "section_start": "0x4000"
         },
         "url": "http://www.arduino.org/products/boards/arduino-m0-pro",
         "vendor": "Arduino"
@@ -1014,7 +1015,8 @@
             "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
-            "wait_for_upload_port": true
+            "wait_for_upload_port": true,
+            "section_start": "0x4000"
         },
         "url": "http://www.arduino.org/products/boards/arduino-m0-pro",
         "vendor": "Arduino"
@@ -1047,7 +1049,8 @@
             "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
-            "wait_for_upload_port": true
+            "wait_for_upload_port": true,
+            "section_start": "0x4000"
         },
         "url": "http://www.arduino.org/products/boards/arduino-m0",
         "vendor": "Arduino"
@@ -1078,7 +1081,8 @@
             "require_upload_port" : true,
             "speed": 57600,
             "use_1200bps_touch": true,
-            "wait_for_upload_port": true
+            "wait_for_upload_port": true,
+            "section_start": "0x4000"
         },
         "url": "http://www.arduino.org/products/boards/arduino-tian",
         "vendor": "Arduino"

@@ -79,7 +79,9 @@ env.Append(
     ]
 )
 
-if "arduino.org" in BOARD_OPTIONS.get("url", ""):
+user_code_section = BOARD_OPTIONS.get("upload", {}).get("section_start", False)
+
+if user_code_section:
     env.Append(
         CPPDEFINES=[
             "printf=iprintf"
@@ -87,7 +89,7 @@ if "arduino.org" in BOARD_OPTIONS.get("url", ""):
 
         LINKFLAGS=[
             "-Wl,--entry=Reset_Handler",
-            "-Wl,--section-start=.text=0x4000"
+            "-Wl,--section-start=.text=%s" % user_code_section
         ]
     )
 
@@ -164,8 +166,7 @@ elif upload_protocol == "openocd":
             "-c", "\"telnet_port", "disabled;",
             "program", "{{$SOURCES}}",
             "verify", "reset",
-            "%s;" % "0x4000" if "arduino.org" in BOARD_OPTIONS.get(
-                "url", "") else "0x2000",
+            "%s;" % user_code_section if user_code_section else "0x2000",
             "shutdown\""
         ],
 
