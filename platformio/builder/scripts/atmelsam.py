@@ -18,7 +18,7 @@
 
 from os.path import basename, join
 
-from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Default,
+from SCons.Script import (COMMAND_LINE_TARGETS, AlwaysBuild, Builder, Default,
                           DefaultEnvironment, SConscript)
 
 from platformio.util import get_serialports
@@ -40,7 +40,8 @@ def BeforeUpload(target, source, env):  # pylint: disable=W0613,W0621
         env.Replace(UPLOAD_PORT=env.WaitForNewSerialPort(before_ports))
 
     # use only port name for BOSSA
-    if "/" in env.subst("$UPLOAD_PORT"):
+    if ("/" in env.subst("$UPLOAD_PORT") and
+            env.subst("$UPLOAD_PROTOCOL") == "sam-ba"):
         env.Replace(UPLOAD_PORT=basename(env.subst("$UPLOAD_PORT")))
 
 
@@ -174,6 +175,21 @@ elif upload_protocol == "openocd":
     )
 
 elif upload_protocol == "stk500v2":
+    env.Append(
+        BUILDERS=dict(
+            ElfToHex=Builder(
+                action=" ".join([
+                    "$OBJCOPY",
+                    "-O",
+                    "ihex",
+                    "-R",
+                    ".eeprom",
+                    "$SOURCES",
+                    "$TARGET"]),
+                suffix=".hex"
+            )
+        )
+    )
     env.Replace(
         UPLOADER=join("$PIOPACKAGES_DIR", "tool-avrdude", "avrdude"),
         UPLOADERFLAGS=[
@@ -201,6 +217,8 @@ target_elf = env.BuildProgram()
 
 if "uploadlazy" in COMMAND_LINE_TARGETS:
     target_firm = join("$BUILD_DIR", "firmware.bin")
+elif upload_protocol == "stk500v2":
+    target_firm = env.ElfToHex(join("$BUILD_DIR", "firmware"), target_elf)
 else:
     target_firm = env.ElfToBin(join("$BUILD_DIR", "firmware"), target_elf)
 
